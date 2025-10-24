@@ -151,13 +151,16 @@ noremap <c-left> <c-w>>
 noremap <c-right> <c-w><
 
 " NERDTree specific mappings.
-" Map the F3 key to toggle NERDTree open and close.
-nnoremap <F3> :NERDTreeToggle<cr>
 
 " Have nerdtree ignore certain files and directories.
 let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', '\.pyc$', '\.odt$', '\.png$', '\.gif$', '\.db$']
 
 " }}}
+
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
 
 
 
@@ -267,4 +270,24 @@ let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_python_flake8_options = '--max-line-length 88 --extend-ignore=E203'
+
+
+" Start NERDTree and leave the cursor in it.
+autocmd VimEnter * NERDTree | wincmd p
+
+
+" Start NERDTree when Vim is started without file arguments.
+autocmd StdinReadPre * let s:std_in=1
+" Start NERDTree when Vim is started without file arguments.
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+" Start NERDTree. If a file is specified, move the cursor to its window.
+autocmd VimEnter * NERDTree | if argc() > 0 || exists("s:std_in") | wincmd p | endif
+
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
+
+" Close the tab if NERDTree is the only window remaining in it.
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
+
+
 
